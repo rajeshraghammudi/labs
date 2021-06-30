@@ -39,6 +39,8 @@ elif [ $1 == "ubuntu" ];then
         exp "/usr/bin/expect"
    fi
 
+
+
 elif [ $1 == "amzn" ];then
 
    echo $1
@@ -49,6 +51,19 @@ elif [ $1 == "amzn" ];then
    else
         exp "/usr/bin/expect"
    fi
+
+elif [ $1 == "rhel" ];then
+
+   echo $1
+   if [ ! -f /usr/bin/expect ] && [ ! -f /bin/expect ];then
+        rpm -Uvh http://epel.mirror.net.in/epel/6/x86_64/epel-release-6-8.noarch.rpm
+        yum install -y expect
+        exp "/bin/expect"
+   else
+        exp "/bin/expect"
+   fi
+
+
 
 elif [ $1 == "centos" ];then
 
@@ -110,15 +125,16 @@ GROUP="devops"
 passw="today@1234"
 
 if [ -f /etc/os-release ];then
-   osname=`grep ID /etc/os-release | egrep -v 'VERSION|LIKE|VARIANT' | cut -d'=' -f2 | sed -e 's/"//' -e 's/"//'`
+   osname=`grep ID /etc/os-release | egrep -v 'VERSION|LIKE|VARIANT|platform' | cut -d'=' -f2 | sed -e 's/"//' -e 's/"//'`
    echo $osname
+   echo "->>$osname<--"
 else
    echo "can not locate /etc/os-release - unable find the osname"
    exit 8
 fi
 
 case "$osname" in
-  sles|amzn|ubuntu|centos)
+  sles|amzn|ubuntu|centos|rhel)
      userdel -r $USER 
      groupdel $GROUP
      sleep 3
